@@ -4,7 +4,9 @@ import { Server } from "socket.io";
 @WebSocketGateway()
 export class MyGateway  implements OnModuleInit{ 
 
-    @WebSocketServer()
+    @WebSocketServer({cores:{
+        origin:["*"]
+    }})
     server:Server
 
     onModuleInit() {
