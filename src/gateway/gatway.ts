@@ -1,12 +1,15 @@
 import { OnModuleInit } from "@nestjs/common";
 import { MessageBody, SubscribeMessage, WebSocketGateway, WebSocketServer } from "@nestjs/websockets";
 import { Server } from "socket.io";
-@WebSocketGateway()
+
+@WebSocketGateway({
+    cors:{
+    origin:["*"],
+}})
+
 export class MyGateway  implements OnModuleInit{ 
 
-    @WebSocketServer({cores:{
-        origin:["*"]
-    }})
+    @WebSocketServer()
     server:Server
 
     onModuleInit() {
