@@ -15,18 +15,28 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.MyGateway = void 0;
 const websockets_1 = require("@nestjs/websockets");
 const socket_io_1 = require("socket.io");
+const users_1 = require("../users/users");
 let MyGateway = exports.MyGateway = class MyGateway {
     onModuleInit() {
-        this.server.on("connection", (socket) => {
-            console.log(socket.id);
-            console.log("connected");
+        this.server.on('connection', (socket) => {
+            const users = (0, users_1.getUsers)();
+            const result = users.find((a) => a.name === socket.handshake.query[0]);
+            if (!result) {
+                this.server.emit('onMessage', {
+                    msg: 'New User',
+                    content: ' is Online',
+                    user: socket.handshake.query[0],
+                });
+                (0, users_1.addUser)(socket.id, socket.handshake.query[0]);
+            }
+            console.log('connected');
         });
     }
     onNewMessage(body) {
         console.log(body);
-        this.server.emit("onMessage", {
-            msg: "New Message",
-            content: body
+        this.server.emit('onMessage', {
+            msg: 'New Message',
+            content: body,
         });
     }
 };
@@ -35,13 +45,17 @@ __decorate([
     __metadata("design:type", socket_io_1.Server)
 ], MyGateway.prototype, "server", void 0);
 __decorate([
-    (0, websockets_1.SubscribeMessage)("newMessage"),
+    (0, websockets_1.SubscribeMessage)('newMessage'),
     __param(0, (0, websockets_1.MessageBody)()),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [Object]),
     __metadata("design:returntype", void 0)
 ], MyGateway.prototype, "onNewMessage", null);
 exports.MyGateway = MyGateway = __decorate([
-    (0, websockets_1.WebSocketGateway)()
+    (0, websockets_1.WebSocketGateway)({
+        cors: {
+            origin: ['http://localhost:3000'],
+        },
+    })
 ], MyGateway);
 //# sourceMappingURL=gatway.js.map
