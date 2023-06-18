@@ -4,9 +4,10 @@ export const getUsers = () => {
   return userList;
 };
 
-export const addUser = (id: string, name: any) => {
+export const addUser = (name: any, points: number, multiplier: number) => {
   userList.push({
-    id: id,
     name: name,
+    points: points,
+    multiplier: multiplier,
   });
 };
